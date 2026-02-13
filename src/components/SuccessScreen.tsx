@@ -83,13 +83,23 @@ export const SuccessScreen: React.FC<SuccessScreenProps> = ({ data, transactionI
                         <span className="text-gray-600">Account No:</span>
                         <span className="text-right font-bold">{data.accountNumber}</span>
                     </div>
+
+                    <div className="flex justify-between">
+                        <span className="text-gray-600">Amount:</span>
+                        <span className="text-right font-medium">₱{data.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    </div>
+
+                    <div className="flex justify-between">
+                        <span className="text-gray-600">Fee:</span>
+                        <span className="text-right font-medium">₱{data.fee.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    </div>
                 </div>
 
                 {/* Total */}
                 <div className="border-t-2 border-dashed border-gray-300 pt-4 mb-6">
                     <div className="flex justify-between items-end">
                         <span className="text-base font-bold">TOTAL</span>
-                        <span className="text-2xl font-bold">₱{data.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                        <span className="text-2xl font-bold">₱{data.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                 </div>
 

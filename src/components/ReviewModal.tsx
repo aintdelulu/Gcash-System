@@ -39,11 +39,11 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({ data, onConfirm, onCan
                         </div>
                         <div className="flex justify-between">
                             <span className="text-gray-500">Service Fee</span>
-                            <span className="font-semibold text-gray-900">₱0.00</span>
+                            <span className="font-semibold text-gray-900">₱{data.fee.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between pt-2">
                             <span className="text-gray-900 font-bold">Total Amount</span>
-                            <span className="font-bold text-blue-700">₱{data.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                            <span className="font-bold text-blue-700">₱{data.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </div>
                     </div>
                 </div>

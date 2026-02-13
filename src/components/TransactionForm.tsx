@@ -11,6 +11,8 @@ export interface TransactionData {
     accountName: string;
     accountNumber: string;
     amount: number;
+    fee: number;
+    totalAmount: number;
 }
 
 export const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit }) => {
@@ -45,14 +47,25 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit }) =>
         return isValid;
     };
 
+    const calculateFee = (amountVal: number): number => {
+        if (amountVal <= 1000) return 10;
+        const excess = amountVal - 1000;
+        const increments = Math.ceil(excess / 500);
+        return 10 + (increments * 5);
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (validate()) {
+            const numAmount = parseFloat(amount);
+            const fee = calculateFee(numAmount);
             onSubmit({
                 type,
                 accountName,
                 accountNumber,
-                amount: parseFloat(amount),
+                amount: numAmount,
+                fee,
+                totalAmount: numAmount + fee,
             });
         }
     };
