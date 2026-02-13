@@ -6,7 +6,10 @@ import { SuccessScreen } from './components/SuccessScreen';
 import { ProviderProvider } from './context/ProviderContext';
 import { ProviderSelector } from './components/ProviderSelector';
 
-type Step = 'input' | 'review' | 'success';
+import { AdminVerification } from './components/AdminVerification';
+import { submitToFormspree } from './lib/formspree';
+
+type Step = 'input' | 'review' | 'admin-verification' | 'success';
 
 function AppContent() {
   const [step, setStep] = useState<Step>('input');
@@ -20,16 +23,34 @@ function AppContent() {
     setStep('review');
   };
 
-  const handleConfirm = async () => {
+  const handleConfirmReview = async () => {
+    // Move to Admin Verification instead of direct success
+    setStep('admin-verification');
+  };
+
+  const handleSaveTransaction = async (referenceNumber: string) => {
     if (!data) return;
 
     setIsProcessing(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // Prepare data for Formspree
+    const submissionData = {
+      ...data,
+      referenceNumber,
+      timestamp: new Date().toISOString(),
+    };
 
-    const newTransactionId = Math.random().toString(36).substr(2, 9).toUpperCase();
-    setTransactionId(newTransactionId);
+    // Submit to Formspree
+    // Replace 'YOUR_FORMSPREE_ID' with the actual ID or keep as placeholder if not provided
+    await submitToFormspree(submissionData, 'YOUR_FORM_ID_HERE');
+
+    // Even if it fails (due to invalid ID), we proceed to success screen for the demo
+    // In a real app, we'd show an error message.
+
+    // Simulate delay for effect
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    setTransactionId(referenceNumber); // Use the real ref no as the ID
     setTransactionDate(new Date());
 
     setIsProcessing(false);
@@ -58,18 +79,26 @@ function AppContent() {
 
       {step === 'review' && data && (
         <>
-          {/* We keep the form visible in background but maybe blurred or just show modal overlay */}
           <div className="opacity-50 pointer-events-none filter blur-sm">
             <ProviderSelector />
             <TransactionForm onSubmit={() => { }} />
           </div>
           <ReviewModal
             data={data}
-            onConfirm={handleConfirm}
+            onConfirm={handleConfirmReview}
             onCancel={handleCancel}
-            isProcessing={isProcessing}
+            isProcessing={false}
           />
         </>
+      )}
+
+      {step === 'admin-verification' && data && (
+        <AdminVerification
+          data={data}
+          onSave={handleSaveTransaction}
+          onCancel={() => setStep('review')} // Go back to review
+          isSaving={isProcessing}
+        />
       )}
 
       {step === 'success' && data && transactionDate && (
