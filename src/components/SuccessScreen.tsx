@@ -1,6 +1,9 @@
 import React from 'react';
 import { Printer, Share2, CheckCircle, RotateCcw } from 'lucide-react';
 import type { TransactionData } from './TransactionForm';
+import { useProvider } from '../context/ProviderContext'; // Import context
+import { cn } from '../lib/utils';
+import { Button } from './ui/button';
 
 interface SuccessScreenProps {
     data: TransactionData;
@@ -10,6 +13,9 @@ interface SuccessScreenProps {
 }
 
 export const SuccessScreen: React.FC<SuccessScreenProps> = ({ data, transactionId, date, onNewTransaction }) => {
+    const { provider } = useProvider();
+    const isGCash = provider === 'GCash';
+
     const handlePrint = () => {
         window.print();
     };
@@ -19,10 +25,14 @@ export const SuccessScreen: React.FC<SuccessScreenProps> = ({ data, transactionI
         timeStyle: 'short',
     });
 
+    const primaryColor = isGCash ? 'text-blue-600' : 'text-green-600';
+    const bgLight = isGCash ? 'bg-blue-50' : 'bg-green-50';
+
+
     return (
         <div className="flex flex-col items-center animate-in fade-in zoom-in-95 duration-500">
             <div className="no-print flex flex-col items-center mb-8">
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4 text-green-600 shadow-sm">
+                <div className={cn("w-20 h-20 rounded-full flex items-center justify-center mb-4 shadow-sm", isGCash ? "bg-blue-100 text-blue-600" : "bg-green-100 text-green-600")}>
                     <CheckCircle className="w-10 h-10" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900">Transaction Successful</h2>
@@ -31,21 +41,25 @@ export const SuccessScreen: React.FC<SuccessScreenProps> = ({ data, transactionI
 
             {/* Main Action Buttons (No Print) */}
             <div className="w-full grid grid-cols-2 gap-3 mb-8 no-print">
-                <button
+                <Button
                     onClick={handlePrint}
-                    className="flex items-center justify-center space-x-2 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-md active:scale-95 transition-transform"
+                    className="w-full font-bold shadow-md"
+                    size="lg"
+                    variant={isGCash ? "gcash" : "maya"}
                 >
-                    <Printer className="w-5 h-5" />
-                    <span>Print Receipt</span>
-                </button>
+                    <Printer className="w-5 h-5 mr-2" />
+                    Print Receipt
+                </Button>
 
-                {/* Placeholder for Share/Save - just a visual button for now as per requirements */}
-                <button
-                    className="flex items-center justify-center space-x-2 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold shadow-sm hover:bg-gray-50 active:scale-95 transition-transform"
+                {/* Placeholder for Share/Save */}
+                <Button
+                    variant="outline"
+                    className="w-full font-bold shadow-sm"
+                    size="lg"
                 >
-                    <Share2 className="w-5 h-5" />
-                    <span>Share</span>
-                </button>
+                    <Share2 className="w-5 h-5 mr-2" />
+                    Share
+                </Button>
             </div>
 
             {/* Receipt Preview (Visible on Screen & Print) */}
@@ -55,7 +69,7 @@ export const SuccessScreen: React.FC<SuccessScreenProps> = ({ data, transactionI
             >
                 {/* Receipt Header */}
                 <div className="text-center border-b-2 border-dashed border-gray-300 pb-4 mb-4">
-                    <h1 className="font-bold text-xl uppercase tracking-wider">GCash Partner</h1>
+                    <h1 className="font-bold text-xl uppercase tracking-wider">{isGCash ? "GCash Partner" : "Maya Center"}</h1>
                     <p className="text-xs text-gray-500 mt-1">Official Receipt</p>
                 </div>
 
@@ -114,7 +128,7 @@ export const SuccessScreen: React.FC<SuccessScreenProps> = ({ data, transactionI
             <div className="mt-8 w-full no-print">
                 <button
                     onClick={onNewTransaction}
-                    className="w-full flex items-center justify-center space-x-2 py-4 text-blue-600 font-bold hover:bg-blue-50 rounded-xl transition-colors"
+                    className={cn("w-full flex items-center justify-center space-x-2 py-4 font-bold hover:bg-opacity-10 rounded-xl transition-colors", primaryColor, bgLight)}
                 >
                     <RotateCcw className="w-5 h-5" />
                     <span>New Transaction</span>

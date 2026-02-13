@@ -3,10 +3,12 @@ import { Layout } from './components/Layout';
 import { TransactionForm, type TransactionData } from './components/TransactionForm';
 import { ReviewModal } from './components/ReviewModal';
 import { SuccessScreen } from './components/SuccessScreen';
+import { ProviderProvider } from './context/ProviderContext';
+import { ProviderSelector } from './components/ProviderSelector';
 
 type Step = 'input' | 'review' | 'success';
 
-function App() {
+function AppContent() {
   const [step, setStep] = useState<Step>('input');
   const [data, setData] = useState<TransactionData | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -48,13 +50,17 @@ function App() {
   return (
     <Layout>
       {step === 'input' && (
-        <TransactionForm onSubmit={handleFormSubmit} />
+        <>
+          <ProviderSelector />
+          <TransactionForm onSubmit={handleFormSubmit} />
+        </>
       )}
 
       {step === 'review' && data && (
         <>
           {/* We keep the form visible in background but maybe blurred or just show modal overlay */}
           <div className="opacity-50 pointer-events-none filter blur-sm">
+            <ProviderSelector />
             <TransactionForm onSubmit={() => { }} />
           </div>
           <ReviewModal
@@ -75,6 +81,14 @@ function App() {
         />
       )}
     </Layout>
+  );
+}
+
+function App() {
+  return (
+    <ProviderProvider>
+      <AppContent />
+    </ProviderProvider>
   );
 }
 
