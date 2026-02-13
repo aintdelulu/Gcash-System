@@ -41,11 +41,15 @@ function AppContent() {
     };
 
     // Submit to Formspree
-    // Replace 'YOUR_FORMSPREE_ID' with the actual ID or keep as placeholder if not provided
-    await submitToFormspree(submissionData, 'YOUR_FORM_ID_HERE');
+    const result = await submitToFormspree(submissionData, 'mwvnladw');
 
-    // Even if it fails (due to invalid ID), we proceed to success screen for the demo
-    // In a real app, we'd show an error message.
+    if (!result.success) {
+      console.error('Failed to submit to Formspree:', result.error);
+      // You can add a toast notification here if you have a toast library
+      // For now, we'll still proceed to success screen for demo purposes
+    } else {
+      console.log('Successfully submitted to Formspree!');
+    }
 
     // Simulate delay for effect
     await new Promise(resolve => setTimeout(resolve, 1000));
